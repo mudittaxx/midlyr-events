@@ -180,14 +180,13 @@
     border-color: var(--accent);
   }
 
-  .search-box::before {
-    content: "\u26B2";
+  .search-box svg {
     position: absolute;
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-muted);
-    font-size: 14px;
+    pointer-events: none;
   }
 
   .priority-filter {
@@ -711,6 +710,7 @@
   </div>
 
   <div class="search-box">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="search" placeholder="Search events...">
   </div>
 </div>

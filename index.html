@@ -653,6 +653,141 @@
     color: var(--red);
   }
 
+  /* Compact Header & What's Next */
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .stats-compact {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .stat-sm {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    text-align: center;
+    min-width: 64px;
+  }
+
+  .stat-sm .stat-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent-light);
+  }
+
+  .stat-sm .stat-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .whats-next {
+    margin-top: 16px;
+    background: linear-gradient(135deg, rgba(108,99,255,0.06) 0%, rgba(34,211,238,0.04) 100%);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+
+  .whats-next-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .whats-next-header h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .whats-next-header .wn-range {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .wn-week-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent-light);
+    padding: 8px 0 4px;
+  }
+
+  .wn-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 6px;
+    border-bottom: 1px solid rgba(46, 51, 69, 0.4);
+  }
+
+  .wn-item:hover {
+    background: rgba(108, 99, 255, 0.08);
+  }
+
+  .wn-item:last-child {
+    border-bottom: none;
+  }
+
+  .wn-date {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-light);
+    min-width: 72px;
+    flex-shrink: 0;
+  }
+
+  .wn-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .wn-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    max-width: 340px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+  }
+
+  .wn-arrow {
+    color: var(--text-muted);
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+
+  .wn-item:hover .wn-arrow {
+    color: var(--accent-light);
+  }
+
+  .wn-empty {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 12px 0;
+    text-align: center;
+  }
+
   @media (max-width: 768px) {
     .header, .controls, .main { padding-left: 16px; padding-right: 16px; }
     .card-grid { grid-template-columns: 1fr; }
@@ -660,24 +795,31 @@
     .timeline-month-label { width: 64px; font-size: 12px; }
     .search-box { margin-left: 0; width: 100%; }
     .search-box input { width: 100%; }
-    .stats-bar { gap: 8px; }
-    .stat { min-width: 100px; padding: 10px 14px; }
+    .stats-compact { gap: 6px; }
+    .stat-sm { min-width: 56px; padding: 4px 8px; }
+    .header-top { flex-direction: column; }
+    .wn-desc { display: none; }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>MidLyr Events & Visibility Strategy</h1>
-  <p>Jun - Dec 2026 &middot; Goal: one meaningful touchpoint every 2 weeks</p>
-  <div class="stats-bar">
-    <div class="stat"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Events</div></div>
-    <div class="stat"><div class="stat-value" id="stat-visible">0</div><div class="stat-label">Showing</div></div>
-    <div class="stat"><div class="stat-value" id="stat-actioned">0</div><div class="stat-label">Actioned</div></div>
-    <div class="stat"><div class="stat-value" id="stat-skipped">0</div><div class="stat-label">Not Now</div></div>
-    <div class="stat"><div class="stat-value" id="stat-budget">$32K-60K</div><div class="stat-label">Est. Budget</div></div>
-    <div class="stat"><div class="stat-value">18</div><div class="stat-label">Biweekly Cadence</div></div>
+  <div class="header-top">
+    <div>
+      <h1>MidLyr Events & Visibility Strategy</h1>
+      <p>Jun - Dec 2026 &middot; Goal: one meaningful touchpoint every 2 weeks</p>
+    </div>
+    <div class="stats-compact">
+      <div class="stat-sm"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total</div></div>
+      <div class="stat-sm"><div class="stat-value" id="stat-visible">0</div><div class="stat-label">Showing</div></div>
+      <div class="stat-sm"><div class="stat-value" id="stat-actioned">0</div><div class="stat-label">Actioned</div></div>
+      <div class="stat-sm"><div class="stat-value" id="stat-skipped">0</div><div class="stat-label">Not Now</div></div>
+      <div class="stat-sm"><div class="stat-value" id="stat-budget">$32K-60K</div><div class="stat-label">Budget</div></div>
+      <div class="stat-sm"><div class="stat-value">18</div><div class="stat-label">Cadence</div></div>
+    </div>
   </div>
+  <div class="whats-next" id="whats-next"></div>
 </div>
 
 <div class="controls">
@@ -799,7 +941,16 @@ const events = [
   // ACCELERATORS
   { name:"FinTech Innovation Lab New York (2027)", type:"accelerator", date:"2026-11-01", dateLabel:"Apply Nov 2026", location:"New York City", cost:"FREE, no equity", priority:"high", audience:"Fintech startups.", relevance:"Mentor committee: CTOs from 40+ institutions. Alumni raised $3B+.", action:"Apply at fintechinnovationlab.com.", category:"Accelerator", actionTaken:"" },
   { name:"FIS Fintech Accelerator", type:"accelerator", date:"2026-12-31", dateLabel:"Rolling", location:"Hybrid", cost:"No equity. FIS funds POC.", priority:"high", audience:"Fintech startups.", relevance:"Largest fintech infra company. Direct bank client base. Alumni: $1.5B+ raised.", action:"Apply at fisglobal.com.", category:"Accelerator", actionTaken:"" },
+
+  // ANALYST BRIEFINGS
+  { name:"Datos Insights \u2014 Analyst Briefing Call", type:"virtual", date:"2026-06-10", dateLabel:"Jun 10 (next week)", location:"Virtual", cost:"Free", priority:"high", audience:"Datos Insights analyst team covering fraud, AML, financial crime.", relevance:"Callback received. Datos analysts directly influence vendor selection at mid-market and regional banks. Discuss: analyst briefing scheduling, Financial Crime Forum (Sep 15-16) sponsorship, webinar co-presentation.", action:"On the call: 1) Schedule formal 30-min analyst briefing. 2) Get Financial Crime Forum sponsorship prospectus. 3) Ask about webinar participation.", category:"Analyst briefing", actionTaken:"Callback received from Datos. Call scheduled for next week." },
+  { name:"Gartner \u2014 Exploratory Call", type:"virtual", date:"2026-06-10", dateLabel:"Jun 10 (next week)", location:"Virtual", cost:"Free", priority:"medium", audience:"Gartner conference/exhibitor team.", relevance:"Exploring Gartner event opportunities. Most relevant future event: Security & Risk Management Summit 2027 and Identity & Access Management Summit (Dec 2026). IT Symposium (Oct) better suited post-seed.", action:"Understand exhibitor packages and timeline. Evaluate Security & Risk Management Summit 2027 for early planning.", category:"Analyst briefing", actionTaken:"Call scheduled for next week." },
+  { name:"Celent (Oliver Wyman) \u2014 Analyst Briefing", type:"virtual", date:"2026-06-16", dateLabel:"Target Jun 16", location:"Virtual", cost:"Free", priority:"high", audience:"Celent analysts covering risk, compliance, and banking technology. Part of Oliver Wyman.", relevance:"Celent's AML vendor evaluations are the 'de facto standard' used by FIs and regulators worldwide. Active 2026 research covers agentic AI in KYC/AML/compliance. Their VendorMatch directory (1,500+ vendors) is searched by bank CTOs during RFPs.", action:"1) Request briefing via celent.com targeting risk/compliance analyst. 2) Register MidLyr on VendorMatch directory.", category:"Analyst briefing", actionTaken:"" },
+  { name:"Cornerstone Advisors \u2014 Ron Shevlin Briefing", type:"virtual", date:"2026-06-25", dateLabel:"Target Jun 25", location:"Virtual", cost:"Free", priority:"high", audience:"Ron Shevlin, Chief Research Officer. Top-5 banking influencer. GonzoBanker newsletter reaches tens of thousands of bank/CU execs.", relevance:"Cornerstone's 'What's Going On in Banking' report (416 bank/CU execs) found 40% of banks had higher fraud losses in 2025 \u2014 validates MidLyr's wedge. If Ron covers MidLyr in GonzoBanker = instant credibility with community/regional banks.", action:"LinkedIn DM to Ron Shevlin. Reference his WGOIB fraud data. Ask for 30-min briefing on what MidLyr is building.", category:"Analyst briefing", actionTaken:"" },
 ];
+
+// Reference date for "What's Next" — update this when refreshing
+const TODAY = '2026-06-08';
 
 // State
 let currentView = 'cards';
@@ -901,7 +1052,60 @@ function typeLabel(type) {
 function priorityClass(p) { return `priority-${p}`; }
 
 function isPassed(dateStr) {
-  return new Date(dateStr) < new Date('2026-06-03');
+  return new Date(dateStr) < new Date(TODAY);
+}
+
+function renderWhatsNext() {
+  const el = document.getElementById('whats-next');
+  const todayDate = new Date(TODAY);
+  const endDate = new Date(TODAY);
+  endDate.setDate(endDate.getDate() + 14);
+
+  const upcoming = events
+    .filter(e => {
+      const d = new Date(e.date);
+      return d >= todayDate && d < endDate && !isSkipped(e.name);
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const startLabel = todayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endLabel = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  // Group by week
+  const week1End = new Date(TODAY);
+  week1End.setDate(week1End.getDate() + 7);
+  const week1 = upcoming.filter(e => new Date(e.date) < week1End);
+  const week2 = upcoming.filter(e => new Date(e.date) >= week1End);
+
+  const renderItems = (items) => items.map(e => `
+    <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
+      <span class="wn-date">${e.dateLabel.split(' ')[0]} ${e.dateLabel.split(' ')[1] || ''}</span>
+      <span class="wn-name">${e.name}</span>
+      <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
+      <span class="priority-tag ${priorityClass(e.priority)}" style="flex-shrink:0">${e.priority.toUpperCase()}</span>
+      <span class="wn-desc">${e.category === 'Analyst briefing' ? e.relevance.split('.')[0] : e.relevance.substring(0, 60)}</span>
+      <span class="wn-arrow">&rsaquo;</span>
+    </div>
+  `).join('');
+
+  if (!upcoming.length) {
+    el.innerHTML = `
+      <div class="whats-next-header">
+        <h2>What's Next</h2>
+        <span class="wn-range">${startLabel} &mdash; ${endLabel}</span>
+      </div>
+      <div class="wn-empty">No upcoming events in the next 2 weeks.</div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="whats-next-header">
+      <h2>What's Next</h2>
+      <span class="wn-range">${startLabel} &mdash; ${endLabel} &middot; ${upcoming.length} item${upcoming.length !== 1 ? 's' : ''}</span>
+    </div>
+    ${week1.length ? `<div class="wn-week-label">This Week</div>${renderItems(week1)}` : ''}
+    ${week2.length ? `<div class="wn-week-label">Next Week</div>${renderItems(week2)}` : ''}
+  `;
 }
 
 function renderCards(list) {
@@ -996,6 +1200,7 @@ function render() {
   document.getElementById('stat-visible').textContent = filtered.length;
   document.getElementById('stat-actioned').textContent = events.filter(e => getActionTaken(e.name)).length;
   document.getElementById('stat-skipped').textContent = skippedSet.size;
+  renderWhatsNext();
 
   document.getElementById('card-view').style.display = currentView === 'cards' ? '' : 'none';
   document.getElementById('timeline-view').style.display = currentView === 'timeline' ? '' : 'none';

@@ -1060,76 +1060,79 @@ function isPassed(dateStr) {
 function renderWhatsNext() {
   const el = document.getElementById('whats-next');
   const todayDate = new Date(TODAY);
-  const endDate = new Date(TODAY);
-  endDate.setDate(endDate.getDate() + 14);
-  const week1End = new Date(TODAY);
-  week1End.setDate(week1End.getDate() + 7);
 
-  const startLabel = todayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const endLabel = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  // Calculate this week (Mon-Sun)
+  const dow = todayDate.getDay();
+  const monOffset = dow === 0 ? -6 : 1 - dow;
+  const thisWeekStart = new Date(todayDate);
+  thisWeekStart.setDate(thisWeekStart.getDate() + monOffset);
+  thisWeekStart.setHours(0,0,0,0);
+  const thisWeekEnd = new Date(thisWeekStart);
+  thisWeekEnd.setDate(thisWeekEnd.getDate() + 7);
+  const nextWeekEnd = new Date(thisWeekEnd);
+  nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
 
-  // 1) Events with calls/meetings scheduled this week (any event date)
-  const callsThisWeek = events.filter(e => {
-    const action = getActionTaken(e.name).toLowerCase();
-    return action.includes('this week') && !isSkipped(e.name);
-  }).sort((a, b) => a.name.localeCompare(b.name));
+  const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-  const callNames = new Set(callsThisWeek.map(e => e.name));
-
-  // 2) Events whose date falls in the next 14 days (exclude ones already in calls)
-  const upcomingByDate = events.filter(e => {
+  // What Happened: events with dates this week that have actionTaken
+  const happened = events.filter(e => {
     const d = new Date(e.date);
-    return d >= todayDate && d < endDate && !isSkipped(e.name) && !callNames.has(e.name);
+    return d >= thisWeekStart && d < thisWeekEnd && getActionTaken(e.name);
   }).sort((a, b) => a.date.localeCompare(b.date));
 
-  const week1Events = upcomingByDate.filter(e => new Date(e.date) < week1End);
-  const week2Events = upcomingByDate.filter(e => new Date(e.date) >= week1End);
+  // What's Next: events with dates next week, not skipped
+  const nextWeek = events.filter(e => {
+    const d = new Date(e.date);
+    return d >= thisWeekEnd && d < nextWeekEnd && !isSkipped(e.name);
+  }).sort((a, b) => a.date.localeCompare(b.date));
 
-  const totalCount = callsThisWeek.length + upcomingByDate.length;
+  const totalCount = happened.length + nextWeek.length;
 
-  const renderItems = (items) => items.map(e => `
+  const renderHappenedItems = (items) => items.map(e => {
+    const action = getActionTaken(e.name);
+    const shortAction = action.length > 60 ? action.substring(0, 60) + '...' : action;
+    return `
+    <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
+      <span class="wn-date">${e.dateLabel.split(' ').slice(0,2).join(' ')}</span>
+      <span class="wn-name">${e.name}</span>
+      <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
+      <span class="wn-desc" style="color:var(--green)">${shortAction}</span>
+      <span class="wn-arrow">&rsaquo;</span>
+    </div>`;
+  }).join('');
+
+  const renderNextItems = (items) => items.map(e => {
+    const action = getActionTaken(e.name);
+    const desc = action
+      ? (action.length > 50 ? action.substring(0, 50) + '...' : action)
+      : (e.action.length > 50 ? e.action.substring(0, 50) + '...' : e.action);
+    return `
     <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
       <span class="wn-date">${e.dateLabel.split(' ').slice(0,2).join(' ')}</span>
       <span class="wn-name">${e.name}</span>
       <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
       <span class="priority-tag ${priorityClass(e.priority)}" style="flex-shrink:0">${e.priority.toUpperCase()}</span>
-      <span class="wn-desc">${e.category === 'Analyst briefing' ? e.relevance.split('.')[0] : e.relevance.substring(0, 60)}</span>
+      <span class="wn-desc"${action ? ' style="color:var(--green)"' : ''}>${desc}</span>
       <span class="wn-arrow">&rsaquo;</span>
-    </div>
-  `).join('');
-
-  const renderCallItems = (items) => items.map(e => {
-    const action = getActionTaken(e.name);
-    const shortAction = action.length > 55 ? action.substring(0, 55) + '...' : action;
-    return `
-    <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
-      <span class="wn-date" style="color:var(--green);font-size:11px">Call</span>
-      <span class="wn-name">${e.name}</span>
-      <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
-      <span class="priority-tag ${priorityClass(e.priority)}" style="flex-shrink:0">${e.priority.toUpperCase()}</span>
-      <span class="wn-desc">${shortAction}</span>
-      <span class="wn-arrow">&rsaquo;</span>
-    </div>
-  `}).join('');
+    </div>`;
+  }).join('');
 
   if (!totalCount) {
     el.innerHTML = `
       <div class="whats-next-header">
-        <h2>What's Next</h2>
-        <span class="wn-range">${startLabel} &mdash; ${endLabel}</span>
+        <h2>This Week & Next</h2>
       </div>
-      <div class="wn-empty">No upcoming events in the next 2 weeks.</div>`;
+      <div class="wn-empty">Nothing scheduled for this period.</div>`;
     return;
   }
 
   el.innerHTML = `
     <div class="whats-next-header">
-      <h2>What's Next</h2>
-      <span class="wn-range">${startLabel} &mdash; ${endLabel} &middot; ${totalCount} item${totalCount !== 1 ? 's' : ''}</span>
+      <h2>This Week & Next</h2>
+      <span class="wn-range">${fmt(thisWeekStart)} &mdash; ${fmt(nextWeekEnd)} &middot; ${totalCount} item${totalCount !== 1 ? 's' : ''}</span>
     </div>
-    ${callsThisWeek.length ? `<div class="wn-week-label">Calls This Week</div>${renderCallItems(callsThisWeek)}` : ''}
-    ${week1Events.length ? `<div class="wn-week-label">Events This Week</div>${renderItems(week1Events)}` : ''}
-    ${week2Events.length ? `<div class="wn-week-label">Next Week</div>${renderItems(week2Events)}` : ''}
+    ${happened.length ? `<div class="wn-week-label" style="color:var(--green)">What Happened (This Week)</div>${renderHappenedItems(happened)}` : ''}
+    ${nextWeek.length ? `<div class="wn-week-label">What's Next (Next Week)</div>${renderNextItems(nextWeek)}` : ''}
   `;
 }
 

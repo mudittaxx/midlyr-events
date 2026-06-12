@@ -1036,6 +1036,11 @@ function getFilteredEvents() {
 
 function sortEvents(list) {
   return [...list].sort((a, b) => {
+    // Skipped items always go to the bottom
+    const aSkip = isSkipped(a.name) ? 1 : 0;
+    const bSkip = isSkipped(b.name) ? 1 : 0;
+    if (aSkip !== bSkip) return aSkip - bSkip;
+
     let va, vb;
     if (sortCol === 'date') { va = a.date; vb = b.date; }
     else if (sortCol === 'name') { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }

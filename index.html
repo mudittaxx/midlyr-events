@@ -951,8 +951,17 @@ const events = [
   { name:"Cornerstone Advisors \u2014 Ron Shevlin Briefing", type:"virtual", date:"2026-06-25", dateLabel:"Target Jun 25", location:"Virtual", cost:"Free", priority:"high", audience:"Ron Shevlin, Chief Research Officer. Top-5 banking influencer. GonzoBanker newsletter reaches tens of thousands of bank/CU execs.", relevance:"Cornerstone's 'What's Going On in Banking' report (416 bank/CU execs) found 40% of banks had higher fraud losses in 2025 \u2014 validates MidLyr's wedge. If Ron covers MidLyr in GonzoBanker = instant credibility with community/regional banks.", action:"LinkedIn DM to Ron Shevlin. Reference his WGOIB fraud data. Ask for 30-min briefing on what MidLyr is building.", category:"Analyst briefing", actionTaken:"" },
 ];
 
-// Reference date for "What's Next" — update this when refreshing
+// Reference date — update this when refreshing
 const TODAY = '2026-06-12';
+
+// Curated next actions — update each session
+const whatsNextItems = [
+  { event: "FinovateFall 2026", note: "Review deal. Compare against XLoD. Decision pending." },
+  { event: "XLoD Global New York", note: "Get sponsorship prospectus. Buyer-driven, invite-only alternative to Finovate." },
+  { event: "Datos Insights \u2014 Analyst Briefing Call", note: "Waiting on fall events prospectus from contact." },
+  { event: "AI in Financial Services (Emerj)", note: "Keeping thread — pressure-testing with network. Commit post-POC." },
+  { event: "Tearsheet Podcast", note: "Keeping thread — won\u2019t commit without direct intros. Pressure-testing." },
+];
 
 // State
 let currentView = 'cards';
@@ -1059,80 +1068,33 @@ function isPassed(dateStr) {
 
 function renderWhatsNext() {
   const el = document.getElementById('whats-next');
-  const todayDate = new Date(TODAY);
+  if (!whatsNextItems.length) {
+    el.innerHTML = `
+      <div class="whats-next-header"><h2>What's Next</h2></div>
+      <div class="wn-empty">No active items. Update during next session.</div>`;
+    return;
+  }
 
-  // Calculate this week (Mon-Sun)
-  const dow = todayDate.getDay();
-  const monOffset = dow === 0 ? -6 : 1 - dow;
-  const thisWeekStart = new Date(todayDate);
-  thisWeekStart.setDate(thisWeekStart.getDate() + monOffset);
-  thisWeekStart.setHours(0,0,0,0);
-  const thisWeekEnd = new Date(thisWeekStart);
-  thisWeekEnd.setDate(thisWeekEnd.getDate() + 7);
-  const nextWeekEnd = new Date(thisWeekEnd);
-  nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
-
-  const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-  // What Happened: events with dates this week that have actionTaken
-  const happened = events.filter(e => {
-    const d = new Date(e.date);
-    return d >= thisWeekStart && d < thisWeekEnd && getActionTaken(e.name);
-  }).sort((a, b) => a.date.localeCompare(b.date));
-
-  // What's Next: events with dates next week, not skipped
-  const nextWeek = events.filter(e => {
-    const d = new Date(e.date);
-    return d >= thisWeekEnd && d < nextWeekEnd && !isSkipped(e.name);
-  }).sort((a, b) => a.date.localeCompare(b.date));
-
-  const totalCount = happened.length + nextWeek.length;
-
-  const renderHappenedItems = (items) => items.map(e => {
-    const action = getActionTaken(e.name);
-    const shortAction = action.length > 60 ? action.substring(0, 60) + '...' : action;
-    return `
-    <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
-      <span class="wn-date">${e.dateLabel.split(' ').slice(0,2).join(' ')}</span>
-      <span class="wn-name">${e.name}</span>
-      <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
-      <span class="wn-desc" style="color:var(--green)">${shortAction}</span>
-      <span class="wn-arrow">&rsaquo;</span>
-    </div>`;
-  }).join('');
-
-  const renderNextItems = (items) => items.map(e => {
-    const action = getActionTaken(e.name);
-    const desc = action
-      ? (action.length > 50 ? action.substring(0, 50) + '...' : action)
-      : (e.action.length > 50 ? e.action.substring(0, 50) + '...' : e.action);
+  const items = whatsNextItems.map(item => {
+    const e = events.find(ev => ev.name === item.event);
+    if (!e) return '';
     return `
     <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
       <span class="wn-date">${e.dateLabel.split(' ').slice(0,2).join(' ')}</span>
       <span class="wn-name">${e.name}</span>
       <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
       <span class="priority-tag ${priorityClass(e.priority)}" style="flex-shrink:0">${e.priority.toUpperCase()}</span>
-      <span class="wn-desc"${action ? ' style="color:var(--green)"' : ''}>${desc}</span>
+      <span class="wn-desc">${item.note}</span>
       <span class="wn-arrow">&rsaquo;</span>
     </div>`;
   }).join('');
 
-  if (!totalCount) {
-    el.innerHTML = `
-      <div class="whats-next-header">
-        <h2>This Week & Next</h2>
-      </div>
-      <div class="wn-empty">Nothing scheduled for this period.</div>`;
-    return;
-  }
-
   el.innerHTML = `
     <div class="whats-next-header">
-      <h2>This Week & Next</h2>
-      <span class="wn-range">${fmt(thisWeekStart)} &mdash; ${fmt(nextWeekEnd)} &middot; ${totalCount} item${totalCount !== 1 ? 's' : ''}</span>
+      <h2>What's Next</h2>
+      <span class="wn-range">${whatsNextItems.length} active item${whatsNextItems.length !== 1 ? 's' : ''} &middot; Updated ${new Date(TODAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
     </div>
-    ${happened.length ? `<div class="wn-week-label" style="color:var(--green)">What Happened (This Week)</div>${renderHappenedItems(happened)}` : ''}
-    ${nextWeek.length ? `<div class="wn-week-label">What's Next (Next Week)</div>${renderNextItems(nextWeek)}` : ''}
+    ${items}
   `;
 }
 

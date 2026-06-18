@@ -716,51 +716,57 @@
     color: var(--text-muted);
   }
 
-  .opp-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-  @media (max-width: 700px) {
-    .opp-grid { grid-template-columns: 1fr; }
+  .opp-list {
+    display: flex;
+    flex-direction: column;
   }
 
-  .opp-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+  .opp-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     padding: 14px 16px;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    cursor: default;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
   }
-  .opp-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 2px 12px rgba(108,99,255,0.10);
+  .opp-row:last-child {
+    border-bottom: none;
+  }
+  .opp-row:hover {
+    background: rgba(108,99,255,0.06);
+  }
+
+  .opp-row-main {
+    flex: 1;
+    min-width: 0;
   }
 
   .opp-title {
     font-size: 14px;
     font-weight: 700;
     color: var(--accent-light);
-    cursor: pointer;
     transition: color 0.15s;
   }
-  .opp-title:hover {
+  .opp-row:hover .opp-title {
     color: var(--accent);
-    text-decoration: underline;
   }
 
   .opp-details {
     font-size: 12px;
     color: var(--text-muted);
-    margin: 8px 0 10px;
+    margin-top: 4px;
     line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .opp-meta {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
     flex-wrap: wrap;
   }
 
@@ -771,6 +777,17 @@
     border-radius: 4px;
     background: rgba(108,99,255,0.12);
     color: var(--accent-light);
+  }
+
+  .opp-row-arrow {
+    color: var(--text-muted);
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: transform 0.15s, color 0.15s;
+  }
+  .opp-row:hover .opp-row-arrow {
+    color: var(--accent-light);
+    transform: translateX(2px);
   }
 
   .card-docs {
@@ -818,6 +835,8 @@
     .stat-sm { min-width: 56px; padding: 4px 8px; }
     .header-top { flex-direction: column; }
     .wn-desc { display: none; }
+    .opp-row { flex-wrap: wrap; gap: 8px; }
+    .opp-meta { width: 100%; }
   }
 </style>
 </head>
@@ -930,7 +949,7 @@ const events = [
 
   // PODCASTS
   { name:"The Pitch (Vox Media)", type:"podcast", date:"2026-06-15", dateLabel:"Pitch June", location:"Virtual", cost:"Free", priority:"high", audience:"Startup enthusiasts, angel investors, VCs. 74 startups have raised $26.3M through the show.", relevance:"Pre-seed stage is exactly what they want. Fundraise + audience exposure simultaneously.", action:"Apply at thepitch.show immediately.", category:"Startup/founder podcast", pitchTier:"Tier 1", actionTaken:"Not now" },
-  { name:"AI in Financial Services (Emerj)", type:"podcast", date:"2026-06-15", dateLabel:"Pitch June", location:"Virtual", cost:"$16.5K-$19.5K", priority:"medium", audience:"C-suite and VP-level at global banks/insurers evaluating AI.", relevance:"Strongest podcast compared to Financial Brand and Tearsheet. Single most relevant AI podcast for MidLyr's niche. 1.7M annual downloads, 24% financial services, 73% Director+ in FS segment.", action:"Ready to go when we have a POC.", category:"AI/tech podcast", pitchTier:"Tier 1", actionTaken:"Strongest podcast option. Expert Feature Series: 1 podcast + 1 article + 75 ABM leads for $16.5K, or EFS Trial (2 podcasts + 95 leads) for $19.5K. Logo sits next to JPMorgan, Wells Fargo, HSBC, UBS. Ready to commit post-POC." },
+  { name:"AI in Financial Services (Emerj)", type:"podcast", date:"2026-06-15", dateLabel:"Pitch June", location:"Virtual", cost:"$16.5K-$19.5K", priority:"medium", audience:"C-suite and VP-level at global banks/insurers evaluating AI. 70% regulated industries; Financial Services is single largest segment (24%). FS seniority: C-Level 9%, Head of 13%, VP 26%, Director 31%, Manager 14%, Other 7%. 73% Director+ in FS, VP+ = 35% of total engagement.", relevance:"Strongest podcast compared to Financial Brand and Tearsheet. Single most relevant AI podcast for MidLyr's niche. 1.7M annual downloads/readers across AI in Business and AI in Financial Services podcasts. Per sponsored series: 20K-30K lifetime downloads, ~6K downloads per supporting article, ~98K opt-in enterprise newsletter subscribers. 73% of engaged FS audience sits at Director+, with VP+ representing 35% — the exact band for governance, risk, compliance, and AI titles.", action:"Ready to go when we have a POC.", category:"AI/tech podcast", pitchTier:"Tier 1", actionTaken:"Strongest podcast option. Expert Feature Series: 1 podcast + 1 article + 75 ABM leads for $16.5K, or EFS Trial (2 podcasts + 95 leads) for $19.5K. Logo sits next to JPMorgan, Wells Fargo, HSBC, UBS. Ready to commit post-POC." },
   { name:"Tearsheet Podcast", type:"podcast", date:"2026-06-15", dateLabel:"Pitch June", location:"Virtual", cost:"$12.5K (reg $15K)", priority:"medium", audience:"Fintech execs, bank product/strategy heads, payments infra builders.", relevance:"Smaller than TFB but much more fintech-focused. High engagement relative to subscriber count. Podcast network includes target accounts (Slash, KeyBank, Upstart).", action:"Keeping in the loop. Similar to Emerj but less of a deal.", category:"Banking/fintech podcast", pitchTier:"Tier 1", actionTaken:"Keeping in the loop. Similar to Emerj but less of a deal. Negotiated $12.5K (reg $15K). Won't do direct intros but open to events introductions to target accounts (Slash, KeyBank, Upstart). Won't commit unless direct introduction is guaranteed." },
   { name:"This Week in Startups (TWiST)", type:"podcast", date:"2026-06-15", dateLabel:"Pitch June", location:"Virtual", cost:"Free", priority:"high", audience:"Founders, angels, VCs, tech operators. 5,000+ episodes.", relevance:"LAUNCH fund connection = dual visibility + investment conversation.", action:"Apply through launch.co/apply. Email askjason@launch.co.", category:"Startup/founder podcast", pitchTier:"Tier 1", actionTaken:"" },
   { name:"Banking Transformed / The Financial Brand (Jim Marous)", type:"podcast", date:"2026-06-15", dateLabel:"Pitch June", location:"Virtual", cost:"Free", priority:"low", audience:"Bank executives, fintech leaders. Most downloaded banking podcast globally.", relevance:"Large audience but skews bank CMOs.", action:"Passing.", category:"Banking/fintech podcast", pitchTier:"Tier 1", actionTaken:"Passing — too obviously sales. Spoke with The Financial Brand. Too expensive for ads, entire brand is sales-oriented. Deprioritized." },
@@ -984,8 +1003,8 @@ const opportunities = [
   {
     event: "AI in Financial Services (Emerj)",
     label: "Emerj — Expert Feature Series",
-    details: "Strongest podcast option for our niche. EFS: 1 podcast + 1 article + 75 ABM leads ($16.5K). EFS Trial: 2 podcasts + 95 ABM leads ($19.5K). Logo sits next to JPMorgan, Wells Fargo, HSBC, UBS. Activate post-POC this fall. Keeping conversation going.",
-    inclusions: "EFS ($16.5K): 1 podcast episode, 1 written article, 75 ABM leads. EFS Trial ($19.5K): 2 podcast episodes, 95 ABM leads",
+    details: "Strongest podcast option for our niche. 1.7M annual downloads/readers. 70% regulated industries, FS = 24% (largest segment). Per series: 20K-30K lifetime downloads, ~6K per article, ~98K opt-in newsletter subs. FS seniority: C-Level 9%, Head of 13%, VP 26%, Director 31%, Manager 14%. 73% Director+, VP+ = 35% — exact band for GRC and AI titles. EFS: 1 podcast + 1 article + 75 ABM leads ($16.5K). EFS Trial: 2 podcasts + 95 ABM leads ($19.5K). Logo sits next to JPMorgan, Wells Fargo, HSBC, UBS. Activate post-POC.",
+    inclusions: "EFS ($16.5K): 1 podcast, 1 insight article, organic social promo, 2 newsletter email inclusions, 75 guaranteed ABM leads. EFS Trial ($19.5K): 2 podcasts, 1 insight article, organic social promo, 4 newsletter email inclusions, 95 guaranteed ABM leads.",
     budget: "$16.5-19.5K",
     dateLabel: "Post-POC",
     priority: "medium"
@@ -1109,6 +1128,27 @@ function isPassed(dateStr) {
   return new Date(dateStr) < new Date(TODAY);
 }
 
+function scrollToEventCard(eventName) {
+  // Switch to cards view if not already
+  if (currentView !== 'cards') {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.view-btn[data-view="cards"]').classList.add('active');
+    currentView = 'cards';
+    render();
+  }
+  const cardId = 'event-card-' + eventName.replace(/[^a-zA-Z0-9]/g, '_');
+  const cardEl = document.getElementById(cardId);
+  if (cardEl) {
+    cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    cardEl.style.borderColor = 'var(--accent-light)';
+    cardEl.style.boxShadow = '0 0 20px rgba(108,99,255,0.25)';
+    setTimeout(() => {
+      cardEl.style.borderColor = '';
+      cardEl.style.boxShadow = '';
+    }, 2000);
+  }
+}
+
 function renderOpportunities() {
   const el = document.getElementById('whats-next');
   if (!opportunities.length) {
@@ -1118,18 +1158,20 @@ function renderOpportunities() {
     return;
   }
 
-  const cards = opportunities.map(opp => {
+  const rows = opportunities.map(opp => {
     const escapedEvent = opp.event.replace(/'/g, "\\'");
     return `
-    <div class="opp-card">
-      <span class="opp-title" onclick="showDetail('${escapedEvent}')">${opp.label}</span>
-      <div class="opp-details">${opp.details}</div>
-      ${opp.inclusions ? `<div class="opp-details" style="margin-top:0"><strong style="color:var(--text);font-size:11px">Includes:</strong> ${opp.inclusions}</div>` : ''}
+    <div class="opp-row" onclick="scrollToEventCard('${escapedEvent}')">
+      <div class="opp-row-main">
+        <span class="opp-title">${opp.label}</span>
+        <div class="opp-details">${opp.details}</div>
+      </div>
       <div class="opp-meta">
         <span class="opp-badge">${opp.budget}</span>
         <span class="opp-badge">${opp.dateLabel}</span>
         <span class="priority-tag ${priorityClass(opp.priority)}">${opp.priority.toUpperCase()}</span>
       </div>
+      <span class="opp-row-arrow">&rsaquo;</span>
     </div>`;
   }).join('');
 
@@ -1138,7 +1180,7 @@ function renderOpportunities() {
       <h2>Opportunities Under Consideration</h2>
       <span class="wn-range">${opportunities.length} opportunit${opportunities.length !== 1 ? 'ies' : 'y'} &middot; Updated ${new Date(TODAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
     </div>
-    <div class="opp-grid">${cards}</div>
+    <div class="opp-list">${rows}</div>
   `;
 }
 
@@ -1146,7 +1188,7 @@ function renderCards(list) {
   const el = document.getElementById('card-view');
   if (!list.length) { el.innerHTML = '<div class="empty-state"><h3>No events match your filters</h3><p>Try adjusting the type or priority filters</p></div>'; return; }
   el.innerHTML = list.map(e => `
-    <div class="card ${isSkipped(e.name)?'skipped':''}" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
+    <div class="card ${isSkipped(e.name)?'skipped':''}" id="event-card-${e.name.replace(/[^a-zA-Z0-9]/g, '_')}" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
       <div class="card-header">
         <div class="card-title">${e.name}</div>
         <span class="card-badge ${badgeClass(e.type)}">${typeLabel(e.type)}</span>

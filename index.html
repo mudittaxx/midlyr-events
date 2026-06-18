@@ -716,76 +716,61 @@
     color: var(--text-muted);
   }
 
-  .wn-week-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--accent-light);
-    padding: 8px 0 4px;
+  .opp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 700px) {
+    .opp-grid { grid-template-columns: 1fr; }
   }
 
-  .wn-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 7px 6px;
-    cursor: pointer;
-    transition: background 0.15s;
-    border-radius: 6px;
-    border-bottom: 1px solid rgba(46, 51, 69, 0.4);
+  .opp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: default;
+  }
+  .opp-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 12px rgba(108,99,255,0.10);
   }
 
-  .wn-item:hover {
-    background: rgba(108, 99, 255, 0.08);
-  }
-
-  .wn-item:last-child {
-    border-bottom: none;
-  }
-
-  .wn-date {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent-light);
-    min-width: 72px;
-    flex-shrink: 0;
-  }
-
-  .wn-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    flex: 1;
-    min-width: 0;
-  }
-
-  .wn-desc {
-    font-size: 11px;
-    color: var(--text-muted);
-    max-width: 340px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex-shrink: 1;
-  }
-
-  .wn-arrow {
-    color: var(--text-muted);
+  .opp-title {
     font-size: 14px;
-    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--accent-light);
+    cursor: pointer;
     transition: color 0.15s;
   }
-
-  .wn-item:hover .wn-arrow {
-    color: var(--accent-light);
+  .opp-title:hover {
+    color: var(--accent);
+    text-decoration: underline;
   }
 
-  .wn-empty {
-    font-size: 13px;
+  .opp-details {
+    font-size: 12px;
     color: var(--text-muted);
-    padding: 12px 0;
-    text-align: center;
+    margin: 8px 0 10px;
+    line-height: 1.5;
+  }
+
+  .opp-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .opp-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(108,99,255,0.12);
+    color: var(--accent-light);
   }
 
   .card-docs {
@@ -977,13 +962,24 @@ const events = [
 // Reference date — update this when refreshing
 const TODAY = '2026-06-18';
 
-// Curated next actions — update each session
-const whatsNextItems = [
-  { event: "XLoD Global New York", note: "Strongly considering. Get sponsorship prospectus. Niche, buyer-driven, roundtables with actual buyers." },
-  { event: "FinovateFall 2026", note: "Recommend Massimo attend as attendee. Trade show vibes, unsure about ROI." },
-  { event: "Datos Insights \u2014 Analyst Briefing & Events", note: "Awaiting deal package info from Datos contact." },
-  { event: "AI in Financial Services (Emerj)", note: "Strongest podcast option. Ready to go post-POC." },
-  { event: "Tearsheet Podcast", note: "Keeping in the loop. Similar to Emerj but less of a deal." },
+// Opportunities under active consideration
+const opportunities = [
+  {
+    event: "FinovateFall 2026",
+    label: "Finovate Credit Union / Community Bank Spotlights",
+    details: "2-hour closed-door discussion with 4-8 sponsors max. Price non-negotiable but can add on email introductions to target buyers.",
+    budget: "$17-20K",
+    dateLabel: "Sep 9-11",
+    priority: "high"
+  },
+  {
+    event: "XLoD Global New York",
+    label: "XLoD Global New York",
+    details: "Niche, buyer-driven conference. Buyers drive the content. 90-120 minute roundtables with actual buyers. Invite-only format.",
+    budget: "TBD",
+    dateLabel: "Sep 23-24",
+    priority: "critical"
+  }
 ];
 
 // State
@@ -1103,35 +1099,35 @@ function isPassed(dateStr) {
   return new Date(dateStr) < new Date(TODAY);
 }
 
-function renderWhatsNext() {
+function renderOpportunities() {
   const el = document.getElementById('whats-next');
-  if (!whatsNextItems.length) {
+  if (!opportunities.length) {
     el.innerHTML = `
-      <div class="whats-next-header"><h2>What's Next</h2></div>
-      <div class="wn-empty">No active items. Update during next session.</div>`;
+      <div class="whats-next-header"><h2>Opportunities Under Consideration</h2></div>
+      <div style="font-size:13px;color:var(--text-muted);padding:12px 0;text-align:center;">No active opportunities.</div>`;
     return;
   }
 
-  const items = whatsNextItems.map(item => {
-    const e = events.find(ev => ev.name === item.event);
-    if (!e) return '';
+  const cards = opportunities.map(opp => {
+    const escapedEvent = opp.event.replace(/'/g, "\\'");
     return `
-    <div class="wn-item" onclick="showDetail('${e.name.replace(/'/g, "\\'")}')">
-      <span class="wn-date">${e.dateLabel.split(' ').slice(0,2).join(' ')}</span>
-      <span class="wn-name">${e.name}</span>
-      <span class="card-badge ${badgeClass(e.type)}" style="font-size:10px;padding:2px 7px;flex-shrink:0">${typeLabel(e.type)}</span>
-      <span class="priority-tag ${priorityClass(e.priority)}" style="flex-shrink:0">${e.priority.toUpperCase()}</span>
-      <span class="wn-desc">${item.note}</span>
-      <span class="wn-arrow">&rsaquo;</span>
+    <div class="opp-card">
+      <span class="opp-title" onclick="showDetail('${escapedEvent}')">${opp.label}</span>
+      <div class="opp-details">${opp.details}</div>
+      <div class="opp-meta">
+        <span class="opp-badge">${opp.budget}</span>
+        <span class="opp-badge">${opp.dateLabel}</span>
+        <span class="priority-tag ${priorityClass(opp.priority)}">${opp.priority.toUpperCase()}</span>
+      </div>
     </div>`;
   }).join('');
 
   el.innerHTML = `
     <div class="whats-next-header">
-      <h2>What's Next</h2>
-      <span class="wn-range">${whatsNextItems.length} active item${whatsNextItems.length !== 1 ? 's' : ''} &middot; Updated ${new Date(TODAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+      <h2>Opportunities Under Consideration</h2>
+      <span class="wn-range">${opportunities.length} opportunit${opportunities.length !== 1 ? 'ies' : 'y'} &middot; Updated ${new Date(TODAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
     </div>
-    ${items}
+    <div class="opp-grid">${cards}</div>
   `;
 }
 
@@ -1228,7 +1224,7 @@ function render() {
   document.getElementById('stat-visible').textContent = filtered.length;
   document.getElementById('stat-actioned').textContent = events.filter(e => getActionTaken(e.name)).length;
   document.getElementById('stat-skipped').textContent = skippedSet.size;
-  renderWhatsNext();
+  renderOpportunities();
 
   document.getElementById('card-view').style.display = currentView === 'cards' ? '' : 'none';
   document.getElementById('timeline-view').style.display = currentView === 'timeline' ? '' : 'none';

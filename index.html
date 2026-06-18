@@ -974,9 +974,10 @@ const opportunities = [
   },
   {
     event: "XLoD Global New York",
-    label: "XLoD Global New York",
-    details: "Niche, buyer-driven conference. Buyers drive the content. 90-120 minute roundtables with actual buyers. Invite-only format.",
-    budget: "TBD",
+    label: "XLoD Global New York — Bespoke VIP Roundtable",
+    details: "Associate Sponsor: Bespoke VIP Roundtable. Curated 40-min closed-door discussion on a topic we define. Organizer invites 8-10 practitioners from target institutions that fit our ICP. 2 MidLyr participants at the table.",
+    inclusions: "3 delegate passes, branding on event materials, full delegate list access, post-event report, logo on website & email campaigns",
+    budget: "$25,000",
     dateLabel: "Sep 23-24",
     priority: "critical"
   }
@@ -1114,6 +1115,7 @@ function renderOpportunities() {
     <div class="opp-card">
       <span class="opp-title" onclick="showDetail('${escapedEvent}')">${opp.label}</span>
       <div class="opp-details">${opp.details}</div>
+      ${opp.inclusions ? `<div class="opp-details" style="margin-top:0"><strong style="color:var(--text);font-size:11px">Includes:</strong> ${opp.inclusions}</div>` : ''}
       <div class="opp-meta">
         <span class="opp-badge">${opp.budget}</span>
         <span class="opp-badge">${opp.dateLabel}</span>
